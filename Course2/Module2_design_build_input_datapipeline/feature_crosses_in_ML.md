@@ -63,3 +63,66 @@ Consider a scenario in a real estate model where you want to predict property pr
 
 - Combining embeddings with numerical features to create feature crosses is a powerful technique in machine learning. It allows models to leverage the strengths of both categorical and continuous data, leading to improved performance and more accurate predictions.
 ---
+
+```python
+import numpy as np
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Embedding, Flatten, Dense
+
+# Define the number of unique movie IDs and the embedding dimension
+import numpy as np
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Embedding, Flatten, Dense, Dropout
+from tensorflow.keras.optimizers import Adam
+from sklearn.model_selection import train_test_split
+
+# Generate synthetic data
+# Let's assume we have 1000 samples, with movie IDs ranging from 0 to 499
+num_samples = 1000
+num_movies = 500  # Total number of unique movies
+embedding_dim = 25  # Size of the embedding vectors
+
+# Randomly generate movie IDs and corresponding ratings (1 to 5)
+X = np.random.randint(0, num_movies, size=num_samples)  # Movie IDs
+y = np.random.randint(1, 6, size=num_samples)  # Ratings
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create a Sequential model
+model = Sequential()
+
+# Add an embedding layer
+# This layer will convert movie IDs into dense vectors of size 'embedding_dim'
+model.add(Embedding(input_dim=num_movies, output_dim=embedding_dim, input_length=1))
+
+# Flatten the output from the embedding layer to feed into the next layer
+model.add(Flatten())
+
+# Add a dense layer with 64 units and ReLU activation
+model.add(Dense(64, activation='relu'))
+
+# Add a dropout layer to prevent overfitting
+model.add(Dropout(0.5))
+
+# Add another dense layer with 32 units
+model.add(Dense(32, activation='relu'))
+
+# Add the output layer with a single unit for predicted rating
+model.add(Dense(1, activation='linear'))
+
+# Compile the model
+# We use mean squared error as the loss function for regression tasks
+model.compile(optimizer=Adam(), loss='mean_squared_error')
+
+# Train the model
+# Fit the model on the training data for 10 epochs
+model.fit(X_train, y_train, epochs=10, batch_size=32, validation_split=0.2)
+
+# Evaluate the model on the test data
+loss = model.evaluate(X_test, y_test)
+print(f'Test Loss: {loss}')
+
+# Summary of the model to see the architecture
+model.summary()
+```
